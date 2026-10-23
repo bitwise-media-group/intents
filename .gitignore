@@ -1,0 +1,12 @@
+# Docs site (zensical via uv): build output, cache, virtualenv, and what
+# scripts/gen_docs.py generates at build time (the per-intent pages and the
+# fragments the hand-written pages embed).
+/site/
+/.cache/
+/.venv/
+/build/
+/docs/intents/
+/coverage/
+__pycache__/
+.ruff_cache/
+.pytest_cache/

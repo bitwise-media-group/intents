@@ -1,0 +1,9 @@
+site/**
+.cache/**
+.venv/**
+build/**
+coverage/**
+docs/intents/**
+uv.lock
+intents/**
+templates/**

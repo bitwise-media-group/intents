@@ -1,0 +1,38 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+name: Intent
+description: >-
+  Draft an intent. The issue is a projection: an intent becomes authoritative when its markdown file is merged under
+  intents/ in this repository.
+title: "[patchy] "
+type: Feature
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Describe one outcome that someone can use once it lands, sized for a single feature-sized build. Write plain,
+        visible text: no HTML comments, `<details>` blocks or emoji. See templates/intent.md for the full shape.
+  - type: textarea
+    id: intent
+    attributes:
+      label: What should change, and why?
+      description: The outcome you want, why it matters, and the concrete scope.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: How will we know it is done?
+      description: Observable acceptance criteria, such as tests, CLI output or render guards.
+    validations:
+      required: true
+  - type: textarea
+    id: isolation
+    attributes:
+      label: Isolation invariants
+      description: >-
+        How this keeps agent pods credential-free, keeps egress broker-only, and keeps state in custom resources with
+        artifacts in git.
+    validations:
+      required: false

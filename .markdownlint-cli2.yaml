@@ -1,0 +1,42 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Repo-local copy of the toolchain house default (.mise/.markdownlint-cli2.yaml)
+# with one delta: the docs site's generated intent pages and fragments are
+# machine-written from the intent files, which are linted at their source.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/refs/heads/main/schema/markdownlint-cli2-config-schema.json
+config:
+  default: true
+  # keep prose readable in terminals and diffs; tables are exempt.
+  line-length:
+    line_length: 120
+    tables: false
+  # intent files carry their title in frontmatter AND as the H1 (the issue title
+  # and the request heading), so the frontmatter title is not a second H1.
+  single-title:
+    front_matter_title: ""
+  no-duplicate-heading:
+    siblings_only: true
+  code-block-style:
+    style: fenced
+
+globs:
+  - "**/*.md"
+
+ignores:
+  # node cruft
+  - "node_modules/**"
+  # the toolchain library submodule (its prose is linted in its own repo)
+  - ".mise/**"
+  # uv-managed virtualenvs (site-packages ship their own markdown)
+  - ".venv/**"
+  # agent cruft
+  - ".claude/**"
+  # machine-written by release-please, not house prose
+  - "CHANGELOG.md"
+  # docs site build output and the pages and fragments generated from the
+  # intent files
+  - "site/**"
+  - "build/**"
+  - "docs/intents/**"
+  - "coverage/**"

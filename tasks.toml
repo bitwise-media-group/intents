@@ -1,0 +1,77 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+#
+# Repo-local tasks, included after common and the python archetype so the
+# same-named ones here replace theirs whole-task. The intent files under
+# intents/ are the source of truth; everything below reads them through
+# scripts/intentlib.py:
+#
+#   lint-intents  validates every intent against the contract (frontmatter,
+#                 sections, visible text, dependencies)
+#   docs-gen      generates the per-intent pages and the area, roadmap,
+#                 catalogue and question fragments the docs site embeds, and
+#                 the README index
+#   docs-check    fails when the README index or zensical.toml's Areas nav no
+#                 longer matches the intents
+#   project       projects the intents onto GitHub issues and project 3
+
+[lint-intents]
+description = "validate every intent file against the contract"
+dir = "{{config_root}}"
+depends = ["sync"]
+run = "uv run --no-sync python scripts/check_intents.py"
+
+[docs-check]
+hide = true
+dir = "{{config_root}}"
+depends = ["sync"]
+run = "uv run --no-sync python scripts/gen_docs.py --check"
+
+# lint is the python archetype's rollup (license, ruff, container, shell,
+# workflow and prose checks) plus the intent contract and the generated-docs
+# drift check.
+[lint]
+description = "ruff + prose, license, workflow checks, the intent contract and generated-docs drift"
+run = [
+  { task = "license-check" },
+  { task = "py-lint" },
+  { task = "lint-containers" },
+  { task = "lint-shell" },
+  { task = "lint-workflows" },
+  { task = "lint-prose" },
+  { task = "lint-intents" },
+  { task = "docs-check" },
+]
+
+# The documentation site (zensical.toml + docs/, built with Zensical via uv).
+# The intent pages and fragments are generated from the intent files into
+# docs/intents/ and build/intent-docs/ (both git-ignored), so every docs entry
+# point regenerates them first; the site can never describe an intent the
+# tree no longer holds.
+[docs-gen]
+description = "generate the intent pages, the docs fragments and the README index"
+dir = "{{config_root}}"
+depends = ["sync"]
+run = "uv run --no-sync python scripts/gen_docs.py"
+
+[docs-build]
+description = "build the documentation site (intent pages + zensical)"
+dir = "{{config_root}}"
+run = [{ task = "docs-gen" }, "uv run --no-sync zensical build"]
+
+[serve]
+description = "serve the docs site locally on :8004 (zensical)"
+dir = "{{config_root}}"
+run = [{ task = "docs-gen" }, "uv run --no-sync zensical serve"]
+
+# The reusable CI workflow runs `mise run build` when the task exists, so a
+# broken page or a missing fragment fails the PR.
+[build]
+description = "build the documentation site"
+run = [{ task = "docs-build" }]
+
+[project]
+description = "project the intents onto GitHub issues and the PDLC project board (needs gh)"
+dir = "{{config_root}}"
+depends = ["sync"]
+run = "uv run --no-sync python scripts/project_issues.py"

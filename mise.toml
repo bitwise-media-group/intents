@@ -1,0 +1,20 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+#
+# intents consumes the shared toolchain (bitwise-media-group/toolchain) as the
+# .mise/ submodule: mise loads its config.toml natively as .mise/config.toml
+# (pinned tools -- uv, prettier, markdownlint, actionlint, zizmor,
+# addlicense, ... -- and the [vars] knob defaults), and this file selects the
+# task files. The repo's code is the Python under scripts/ (the intent
+# validator, the docs generator and the issue projection) and its
+# documentation site (zensical.toml + docs/, built with Zensical via uv), so
+# the python archetype fits: ruff and pytest come from pyproject.toml's dev
+# group. The Makefile is a thin forwarder (.mise/archetypes/python/include.mk).
+# The repo-local task surface lives in tasks.toml.
+
+[task_config]
+# common (prose fmt/lint + license, container, shell and workflow lint), then
+# the python archetype (ruff, pytest, sync, docs-build, serve, build), then
+# the repo-local tasks; tasks.toml is included LAST so its same-named tasks
+# (lint, docs-build, serve, build, pr) win over both.
+includes = [".mise/common/tasks.toml", ".mise/archetypes/python/tasks.toml", "tasks.toml"]
