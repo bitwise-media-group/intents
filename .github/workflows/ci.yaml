@@ -1,0 +1,27 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Continuous integration — thin caller for the org's reusable ci workflow. It
+# discovers the canonical tasks this repo defines and runs `mise run <target>`
+# for each: `lint` — licence headers, ruff, actionlint + zizmor, prose, the
+# intent contract (scripts/check_intents.py) and the generated-docs drift
+# check (scripts/gen_docs.py --check); `test` — pytest over scripts/; and
+# `build`, which generates the intent pages and renders the documentation
+# site, so a broken page or a missing fragment fails the PR.
+#
+# The reusable workflow is pinned to a full commit SHA (tag in the comment) so a
+# moved tag can never change what runs; Renovate keeps the pin fresh.
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# the reusable workflow's jobs only need contents:read; grant just that ceiling
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: bitwise-media-group/github-workflows/.github/workflows/ci.yaml@437369afd3c617ae0cd06085e281574c7eb560a2 # v8.0.1
